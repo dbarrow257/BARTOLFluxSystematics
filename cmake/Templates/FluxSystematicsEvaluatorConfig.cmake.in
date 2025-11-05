@@ -1,0 +1,43 @@
+@PACKAGE_INIT@
+
+set(FluxSystematicsEvaluator_VERSION @PROJECT_VERSION@)
+
+LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../../cmake)
+
+get_filename_component(FluxSystematicsEvaluator_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+list(APPEND CMAKE_MODULE_PATH "${FluxSystematicsEvaluator_CMAKE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${FluxSystematicsEvaluator_CMAKE_DIR}/cmake")
+
+enable_language(CXX)
+
+set(FluxSystematicsEvaluator_FOUND TRUE)
+
+find_package(ROOT @ROOT_VERSION@ EXACT REQUIRED)
+
+include(${CMAKE_CURRENT_LIST_DIR}/FluxSystematicsEvaluatorTargets.cmake)
+
+if(NOT TARGET FluxSystematicsEvaluator::All)
+  cmessage(FATAL_ERROR "Didn't set up FluxSystematicsEvaluator::All")
+endif()
+
+get_filename_component(FluxSystematicsEvaluator_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+find_path(FluxSystematicsEvaluator_PREFIX
+  NAMES bin/setup.FluxSystematicsEvaluator.sh
+  PATHS ${FluxSystematicsEvaluator_CMAKE_DIR}/
+)
+
+cmessage(STATUS "FluxSystematicsEvaluator_LIB_DIR: ${FluxSystematicsEvaluator_LIB_DIR}")
+cmessage(STATUS "FluxSystematicsEvaluator_INCLUDE_DIR: ${FluxSystematicsEvaluator_INCLUDE_DIR}")
+cmessage(STATUS "FluxSystematicsEvaluator_PREFIX: ${FluxSystematicsEvaluator_PREFIX}")
+cmessage(STATUS "FluxSystematicsEvaluator_VERSION: ${FluxSystematicsEvaluator_VERSION}")
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(FluxSystematicsEvaluator
+    REQUIRED_VARS
+      FluxSystematicsEvaluator_INCLUDE_DIR
+      FluxSystematicsEvaluator_LIB_DIR
+      FluxSystematicsEvaluator_PREFIX
+    VERSION_VAR
+      FluxSystematicsEvaluator_VERSION
+)
