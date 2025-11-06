@@ -1,0 +1,55 @@
+@PACKAGE_INIT@
+
+set(BARTOLFluxSystematicsEvaluator_VERSION @PROJECT_VERSION@)
+
+LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../../cmake)
+
+get_filename_component(BARTOLFluxSystematicsEvaluator_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+list(APPEND CMAKE_MODULE_PATH "${BARTOLFluxSystematicsEvaluator_CMAKE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${BARTOLFluxSystematicsEvaluator_CMAKE_DIR}/cmake")
+
+enable_language(CXX)
+
+set(BARTOLFluxSystematicsEvaluator_FOUND TRUE)
+
+find_package(ROOT @ROOT_VERSION@ EXACT REQUIRED)
+
+include(${CMAKE_CURRENT_LIST_DIR}/BARTOLFluxSystematicsEvaluatorTargets.cmake)
+
+if(NOT TARGET BARTOLFluxSystematicsEvaluator::All)
+  cmessage(FATAL_ERROR "Didn't set up BARTOLFluxSystematicsEvaluator::All")
+endif()
+
+get_filename_component(BARTOLFluxSystematicsEvaluator_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+find_path(BARTOLFluxSystematicsEvaluator_LIB_DIR
+  NAMES libBARTOLSystematics.so
+  PATHS @CMAKE_INSTALL_PREFIX@/lib
+)
+
+find_path(BARTOLFluxSystematicsEvaluator_INCLUDE_DIR
+  NAMES Systematics/BARTOLSystematicBase.h
+  PATHS @CMAKE_INSTALL_PREFIX@/include
+)
+
+cmessage("DB:${BARTOLFluxSystematicsEvaluator_CMAKE_DIR}")
+
+find_path(BARTOLFluxSystematicsEvaluator_PREFIX
+  NAMES bin/setup.BARTOLFluxSystematicsEvaluator.sh
+  PATHS @CMAKE_INSTALL_PREFIX@
+)
+
+cmessage(STATUS "BARTOLFluxSystematicsEvaluator_LIB_DIR: ${BARTOLFluxSystematicsEvaluator_LIB_DIR}")
+cmessage(STATUS "BARTOLFluxSystematicsEvaluator_INCLUDE_DIR: ${BARTOLFluxSystematicsEvaluator_INCLUDE_DIR}")
+cmessage(STATUS "BARTOLFluxSystematicsEvaluator_PREFIX: ${BARTOLFluxSystematicsEvaluator_PREFIX}")
+cmessage(STATUS "BARTOLFluxSystematicsEvaluator_VERSION: ${BARTOLFluxSystematicsEvaluator_VERSION}")
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(BARTOLFluxSystematicsEvaluator
+    REQUIRED_VARS
+      BARTOLFluxSystematicsEvaluator_INCLUDE_DIR
+      BARTOLFluxSystematicsEvaluator_LIB_DIR
+      BARTOLFluxSystematicsEvaluator_PREFIX
+    VERSION_VAR
+      BARTOLFluxSystematicsEvaluator_VERSION
+)

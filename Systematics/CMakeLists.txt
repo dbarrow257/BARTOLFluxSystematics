@@ -1,31 +1,21 @@
-set(HEADERS SystematicBase.h Systematic_SolarActivity.h SystematicsHandler.h)
+set(HEADERS BARTOLSystematicBase.h BARTOLSystematic_SolarActivity.h BARTOLSystematicsHandler.h)
 
-add_library(Systematics SHARED SystematicBase.cpp Systematic_SolarActivity.cpp SystematicsHandler.cpp)
+add_library(BARTOLSystematics SHARED BARTOLSystematicBase.cpp BARTOLSystematic_SolarActivity.cpp BARTOLSystematicsHandler.cpp)
 
-target_link_libraries(Systematics yaml-cpp FluxSystematicsEvaluatorCompilerOptions ROOT::Core ROOT::Hist ROOT::Tree)
+target_link_libraries(BARTOLSystematics BARTOLFluxSystematicsEvaluatorCompilerOptions ROOT::Core ROOT::Hist ROOT::Tree)
 
-target_include_directories(Systematics PUBLIC
+target_include_directories(BARTOLSystematics PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../>
   $<INSTALL_INTERFACE:include>
 )
 
-install(TARGETS yaml-cpp
-  EXPORT FluxSystematicsEvaluator-targets
-  LIBRARY DESTINATION lib/
-  PUBLIC_HEADER DESTINATION include/yaml-cpp
-)
-
-install(DIRECTORY ${yaml-cpp_SOURCE_DIR}/include/
-  DESTINATION include/
-)
-
-set_target_properties(Systematics PROPERTIES
+set_target_properties(BARTOLSystematics PROPERTIES
   PUBLIC_HEADER "${HEADERS}"
-  EXPORT_NAME Systematics)
+  EXPORT_NAME BARTOLSystematics)
 
-install(TARGETS Systematics
-  EXPORT FluxSystematicsEvaluator-targets
+install(TARGETS BARTOLSystematics
+  EXPORT BARTOLFluxSystematicsEvaluator-targets
   LIBRARY DESTINATION lib/
   PUBLIC_HEADER DESTINATION include/Systematics)
 
-add_library(Systematics::Systematics ALIAS Systematics)
+add_library(BARTOLSystematics::BARTOLSystematics ALIAS BARTOLSystematics)

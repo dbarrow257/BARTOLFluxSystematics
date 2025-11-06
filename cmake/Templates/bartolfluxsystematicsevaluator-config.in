@@ -11,10 +11,10 @@ print_help() {
     echo -e "\t--incdir                   : Print location of installed header files."
     echo -e "\t--cflags                   : Print compiler include flag for installed header files."
     echo -e "\t--libdir                   : Print location of installed libraries."
-    echo -e "\t--libs                     : Print list of FluxSystematicsEvaluator library names."
+    echo -e "\t--libs                     : Print list of BARTOLFluxSystematicsEvaluator library names."
     echo -e "\t--features                 : Print list of features."
     echo -e "\t--has-feature <feature>    : Returns 0 if has feature, 1 if not."
-    echo -e "\t--version                  : Print FluxSystematicsEvaluator version."
+    echo -e "\t--version                  : Print BARTOLFluxSystematicsEvaluator version."
     echo -e "\t--date                     : Print creation date."
     echo -e "\t-?|--help                  : Print this message."
     exit 0
@@ -42,17 +42,17 @@ while [[ ${#} -gt 0 ]]; do
       ;;
 
       --libs)
-      echo -n "-L${INSTALL_ROOT}/lib @FLUXSYSTEMATICSEVALUATOR_LIB_LIST@"
+      echo -n "-L${INSTALL_ROOT}/lib @BARTOLFLUXSYSTEMATICSEVALUATOR_LIB_LIST@"
       ;;
 
       --features)
-      echo -n "@FLUXSYSTEMATICSEVALUATOR_FEATURES@ "
+      echo -n "@BARTOLFLUXSYSTEMATICSEVALUATOR_FEATURES@ "
       ;;
 
       --has-feature)
       shift
       TEST_FEATURE=$1
-        if [[ "@FLUXSYSTEMATICSEVALUATOR_FEATURES@" =~ (^|[[:space:]])${TEST_FEATURE}($|[[:space:]]) ]]; then
+        if [[ "@BARTOLFLUXSYSTEMATICSEVALUATOR_FEATURES@" =~ (^|[[:space:]])${TEST_FEATURE}($|[[:space:]]) ]]; then
           exit 0
         else
           exit 1
@@ -60,7 +60,7 @@ while [[ ${#} -gt 0 ]]; do
       ;;
 
       --version)
-      echo -n "@FLUXSYSTEMATICSEVALUATOR_VERSION@ "
+      echo -n "@BARTOLFLUXSYSTEMATICSEVALUATOR_VERSION@ "
       ;;
 
       --date)

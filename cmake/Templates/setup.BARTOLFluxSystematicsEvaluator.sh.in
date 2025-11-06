@@ -58,7 +58,7 @@ add_to_LD_LIBRARY_PATH()
 fi
 
 # TN: this is one of the most stable implementation of getting the
-# path to the script being called (and hence the path to the $FLUXSYSTEMATICSEVALUATOR_ROOT/bin)
+# path to the script being called (and hence the path to the $BARTOLFLUXSYSTEMATICSEVALUATOR_ROOT/bin)
 # I have seen so far. This can be called from anywhere and with
 # both source or ., with relative or absolute paths.
 pushd . > '/dev/null';
@@ -74,10 +74,10 @@ cd "$( dirname -- "$SCRIPT_PATH"; )" > '/dev/null';
 SCRIPT_PATH="$( pwd; )";
 popd  > '/dev/null';
 
-export FLUXSYSTEMATICSEVALUATOR_ROOT=${SCRIPT_PATH}/..
-export FLUXSYSTEMATICSEVALUATOR_VERSION=@FLUXSYSTEMATICSEVALUATOR_VERSION@
+export BARTOLFLUXSYSTEMATICSEVALUATOR_ROOT=${SCRIPT_PATH}/..
+export BARTOLFLUXSYSTEMATICSEVALUATOR_VERSION=@BARTOLFLUXSYSTEMATICSEVALUATOR_VERSION@
 
-add_to_PATH ${FLUXSYSTEMATICSEVALUATOR_ROOT}/bin
-add_to_LD_LIBRARY_PATH ${FLUXSYSTEMATICSEVALUATOR_ROOT}/lib
+add_to_PATH ${BARTOLFLUXSYSTEMATICSEVALUATOR_ROOT}/bin
+add_to_LD_LIBRARY_PATH ${BARTOLFLUXSYSTEMATICSEVALUATOR_ROOT}/lib
 
 unset SCRIPT_PATH

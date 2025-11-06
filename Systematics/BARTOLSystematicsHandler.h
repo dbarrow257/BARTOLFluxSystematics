@@ -1,17 +1,17 @@
 #pragma once
 
 #include <vector>
-#include "Systematics/SystematicBase.h"
+#include "Systematics/BARTOLSystematicBase.h"
 
 /**
- * @file SystematicBase.h
+ * @file BARTOLSystematicsHandler.h
  *
- * @class SystematicBase
+ * @class BARTOLSystematicsHandler
  *
  * @brief 
  */
 template<typename T>
-class SystematicsHandler {
+class BARTOLSystematicsHandler {
 public:
   // ========================================================================================================================================================================
   // Public functions which are calculation implementation agnostic
@@ -19,18 +19,18 @@ public:
   /**
    * @brief Constructor
    */
-  SystematicsHandler();
+  BARTOLSystematicsHandler();
   
   /**
    * @brief Destructor
    */
-  ~SystematicsHandler();
+  ~BARTOLSystematicsHandler();
 
   void SetDialValues(std::vector<T> DialValues_);
   T CalculateWeight(int GeneratedNeutrinoFlavourPDG, T NeutrinoEnergy, T NeutrinoCosineZ);
 
 private:
-  std::vector<SystematicBase<T>*> Systematics;
+  std::vector<BARTOLSystematicBase<T>*> Systematics;
   std::vector<T> DialValues;
   size_t nParams;
 };

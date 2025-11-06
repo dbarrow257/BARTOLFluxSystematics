@@ -11,10 +11,10 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
 endif()
 
 #KS: Store some handy cmake functions
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/FluxSystematicsEvaluatorUtils.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/BARTOLFluxSystematicsEvaluatorUtils.cmake)
 
-set(FLUXSYSTEMATICSEVALUATOR_VERSION 1.4.4)
-project(FLUXSYSTEMATICSEVALUATOR VERSION ${FLUXSYSTEMATICSEVALUATOR_VERSION} LANGUAGES CXX)
+set(BARTOLFLUXSYSTEMATICSEVALUATOR_VERSION 1.0.0)
+project(BARTOLFLUXSYSTEMATICSEVALUATOR VERSION ${BARTOLFLUXSYSTEMATICSEVALUATOR_VERSION} LANGUAGES CXX)
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
@@ -29,7 +29,7 @@ endif()
 
 #================================================================================================
 #Custom variable sanitisation
-add_library(FluxSystematicsEvaluatorCompilerOptions INTERFACE)
+add_library(BARTOLFluxSystematicsEvaluatorCompilerOptions INTERFACE)
 
 # download CPM.cmake
 file(
@@ -39,14 +39,14 @@ file(
 )
 include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
 
-if(NOT DEFINED FluxSystematicsEvaluator_Compiler_Flags)
-  set(FluxSystematicsEvaluator_Compiler_Flags "")
+if(NOT DEFINED BARTOLFluxSystematicsEvaluator_Compiler_Flags)
+  set(BARTOLFluxSystematicsEvaluator_Compiler_Flags "")
 endif()
 
-separate_arguments(FluxSystematicsEvaluator_Compiler_Flags)
+separate_arguments(BARTOLFluxSystematicsEvaluator_Compiler_Flags)
 
-cmessage(STATUS "Set compiler options: ${FluxSystematicsEvaluator_Compiler_Flags}")
-add_compile_options(${FluxSystematicsEvaluator_Compiler_Flags})
+cmessage(STATUS "Set compiler options: ${BARTOLFluxSystematicsEvaluator_Compiler_Flags}")
+add_compile_options(${BARTOLFluxSystematicsEvaluator_Compiler_Flags})
 
 #================================================================================================
 #Setup Deps
@@ -64,7 +64,7 @@ CPMAddPackage(
 )
 
 if(NOT TARGET yaml-cpp::yaml-cpp)
-  cmessage(FATAL_ERROR "FluxSystematicsEvaluator Expected dependency target: yaml-cpp::yaml-cpp")
+  cmessage(FATAL_ERROR "BARTOLFluxSystematicsEvaluator Expected dependency target: yaml-cpp::yaml-cpp")
 endif()
 
 find_package(ROOT 6.18 REQUIRED)
@@ -79,50 +79,50 @@ add_subdirectory(Apps)
 
 set(LIBDEST ${CMAKE_INSTALL_PREFIX}/lib)
 
-configure_file(cmake/Templates/setup.FluxSystematicsEvaluator.sh.in "${PROJECT_BINARY_DIR}/setup.FluxSystematicsEvaluator.sh" @ONLY)
-install(FILES "${PROJECT_BINARY_DIR}/setup.FluxSystematicsEvaluator.sh" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+configure_file(cmake/Templates/setup.BARTOLFluxSystematicsEvaluator.sh.in "${PROJECT_BINARY_DIR}/setup.BARTOLFluxSystematicsEvaluator.sh" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/setup.BARTOLFluxSystematicsEvaluator.sh" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
-set_target_properties(FluxSystematicsEvaluatorCompilerOptions PROPERTIES EXPORT_NAME CompilerOptions)
-install(TARGETS FluxSystematicsEvaluatorCompilerOptions
-  EXPORT FluxSystematicsEvaluator-targets
+set_target_properties(BARTOLFluxSystematicsEvaluatorCompilerOptions PROPERTIES EXPORT_NAME CompilerOptions)
+install(TARGETS BARTOLFluxSystematicsEvaluatorCompilerOptions
+  EXPORT BARTOLFluxSystematicsEvaluator-targets
   LIBRARY DESTINATION lib/)
 
 #================================================================================================
 
-#This is to export the target properties of FluxSystematicsEvaluator
-#Anything that links to "FluxSystematicsEvaluator" will get all of these target properties
-add_library(FluxSystematicsEvaluator INTERFACE)
-target_link_libraries(FluxSystematicsEvaluator INTERFACE Systematics FluxSystematicsEvaluatorCompilerOptions)
-set_target_properties(FluxSystematicsEvaluator PROPERTIES EXPORT_NAME All)
+#This is to export the target properties of BARTOLFluxSystematicsEvaluator
+#Anything that links to "BARTOLFluxSystematicsEvaluator" will get all of these target properties
+add_library(BARTOLFluxSystematicsEvaluator INTERFACE)
+target_link_libraries(BARTOLFluxSystematicsEvaluator INTERFACE BARTOLSystematics BARTOLFluxSystematicsEvaluatorCompilerOptions)
+set_target_properties(BARTOLFluxSystematicsEvaluator PROPERTIES EXPORT_NAME All)
 
-install(TARGETS FluxSystematicsEvaluator
-  EXPORT FluxSystematicsEvaluator-targets
+install(TARGETS BARTOLFluxSystematicsEvaluator
+  EXPORT BARTOLFluxSystematicsEvaluator-targets
   LIBRARY DESTINATION lib/)
 
-install(EXPORT FluxSystematicsEvaluator-targets
-  FILE FluxSystematicsEvaluatorTargets.cmake
-  NAMESPACE FluxSystematicsEvaluator::
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/
+install(EXPORT BARTOLFluxSystematicsEvaluator-targets
+  FILE BARTOLFluxSystematicsEvaluatorTargets.cmake
+  NAMESPACE BARTOLFluxSystematicsEvaluator::
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/BARTOLFluxSystematicsEvaluator
 )
 
-add_library(FluxSystematicsEvaluator::All ALIAS FluxSystematicsEvaluator)
+add_library(BARTOLFluxSystematicsEvaluator::All ALIAS BARTOLFluxSystematicsEvaluator)
 
 ############################  Install  ####################################
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-  ${CMAKE_CURRENT_LIST_DIR}/cmake/Templates/FluxSystematicsEvaluatorConfig.cmake.in ${CMAKE_BINARY_DIR}/FluxSystematicsEvaluatorConfig.cmake
+  ${CMAKE_CURRENT_LIST_DIR}/cmake/Templates/BARTOLFluxSystematicsEvaluatorConfig.cmake.in ${CMAKE_BINARY_DIR}/BARTOLFluxSystematicsEvaluatorConfig.cmake
   INSTALL_DESTINATION
   /this/is/ignored/for/some/reason/thanks/kitware
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-write_basic_package_version_file(${CMAKE_BINARY_DIR}/FluxSystematicsEvaluatorConfigVersion.cmake
-  VERSION ${FLUXSYSTEMATICSEVALUATOR_VERSION}
+write_basic_package_version_file(${CMAKE_BINARY_DIR}/BARTOLFluxSystematicsEvaluatorConfigVersion.cmake
+  VERSION ${BARTOLFLUXSYSTEMATICSEVALUATOR_VERSION}
   COMPATIBILITY AnyNewerVersion)
 
 install(FILES
-  ${CMAKE_BINARY_DIR}/FluxSystematicsEvaluatorConfig.cmake
-  ${CMAKE_BINARY_DIR}/FluxSystematicsEvaluatorConfigVersion.cmake
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/FluxSystematicsEvaluator)
+  ${CMAKE_BINARY_DIR}/BARTOLFluxSystematicsEvaluatorConfig.cmake
+  ${CMAKE_BINARY_DIR}/BARTOLFluxSystematicsEvaluatorConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/BARTOLFluxSystematicsEvaluator)
 
-include(fluxsystematicsevaluator-config)
+include(bartolfluxsystematicsevaluator-config)

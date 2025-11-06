@@ -1,10 +1,10 @@
-#include "Systematics/SystematicsHandler.h"
+#include "Systematics/BARTOLSystematicsHandler.h"
 
 #include <iostream>
 #include <iomanip>
 
 int main() {
-  SystematicsHandler<float> SystHandler = SystematicsHandler<float>();
+  BARTOLSystematicsHandler<float> SystHandler = BARTOLSystematicsHandler<float>();
 
   std::vector<float> DialValues = {1.5};
   SystHandler.SetDialValues(DialValues);

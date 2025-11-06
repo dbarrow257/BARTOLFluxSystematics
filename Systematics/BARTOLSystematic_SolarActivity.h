@@ -1,16 +1,16 @@
 #pragma once
 
-#include "SystematicBase.h"
+#include "BARTOLSystematicBase.h"
 
 /**
- * @file Systematic_SolarActivity.h
+ * @file BARTOLSystematic_SolarActivity.h
  *
- * @class Systematic_SolarActivity
+ * @class BARTOLSystematic_SolarActivity
  *
  * @brief 
  */
 template <typename T>
-class Systematic_SolarActivity : public SystematicBase<T> {
+class BARTOLSystematic_SolarActivity : public BARTOLSystematicBase<T> {
  public:
   // ========================================================================================================================================================================
   // Public functions which are calculation implementation agnostic
@@ -18,15 +18,15 @@ class Systematic_SolarActivity : public SystematicBase<T> {
   /**
    * @brief Constructor
    */
-  Systematic_SolarActivity();
+  BARTOLSystematic_SolarActivity();
   
   /**
    * @brief Destructor
    */
-  ~Systematic_SolarActivity();
+  ~BARTOLSystematic_SolarActivity();
 
   T CalculateWeight(T DialValue, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) override;
 };
 
-template class Systematic_SolarActivity<float>;
-template class Systematic_SolarActivity<double>;
+template class BARTOLSystematic_SolarActivity<float>;
+template class BARTOLSystematic_SolarActivity<double>;
