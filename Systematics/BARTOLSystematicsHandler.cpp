@@ -32,7 +32,7 @@ template <typename T>
 T BARTOLSystematicsHandler<T>::CalculateWeight(int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
   T Weight = 1.0;
   for (size_t iPar=0;iPar<nParams;iPar++) {
-    Weight *= Systematics[iPar]->CalculateWeight(DialValues[iPar], GeneratedNeutrinoFlavourPDG_,NeutrinoEnergy_,NeutrinoCosineZ_);
+    Weight *= Systematics[iPar]->CalculateWeight(DialValues, iPar, GeneratedNeutrinoFlavourPDG_,NeutrinoEnergy_,NeutrinoCosineZ_);
   }
   return Weight;
 }
