@@ -31,10 +31,12 @@ void BARTOLSystematicsHandler<T>::SetDialValues(std::vector<T> DialValues_) {
 }
 
 template <typename T>
-T BARTOLSystematicsHandler<T>::CalculateWeight( int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
+T BARTOLSystematicsHandler<T>::CalculateWeight(int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
   T Weight = 1.0;
-  for (size_t iPar=0;iPar<nParams;iPar++) {
-    Weight *= Systematics[iPar]->CalculateWeight(DialValues[iPar], GeneratedNeutrinoFlavourPDG_, NeutrinoEnergy_,NeutrinoCosineZ_);
+  size_t position {0}; //keeps track of where the dial values relevant for a given systematic start in the Dial Value array
+  for (auto systematic : Systematics) {
+    Weight *= systematic->CalculateWeight(DialValues, position, GeneratedNeutrinoFlavourPDG_, NeutrinoEnergy_,NeutrinoCosineZ_);
+    position += systematic->getNumParams();
   }
   return Weight;
 }

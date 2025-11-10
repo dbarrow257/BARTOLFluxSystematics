@@ -1,7 +1,5 @@
 #pragma once
-
 #include "BARTOLSystematicBase.h"
-
 /**
  * @file BARTOLSystematic_SolarActivity.h
  *
@@ -25,7 +23,7 @@ class BARTOLSystematic_SolarActivity : public BARTOLSystematicBase<T> {
    */
   ~BARTOLSystematic_SolarActivity();
 
-  T CalculateWeight(T DialValue, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) override;
+  T CalculateWeight(const std::vector<T>& DialValues, size_t position, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) override;
 };
 
 template class BARTOLSystematic_SolarActivity<float>;

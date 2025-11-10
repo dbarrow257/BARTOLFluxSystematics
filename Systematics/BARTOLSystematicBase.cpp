@@ -1,5 +1,6 @@
 #include "Systematics/BARTOLSystematicBase.h"
 #include <iostream>
+
 template<typename T>
 BARTOLSystematicBase<T>::BARTOLSystematicBase(std::string ParameterName_, size_t numParams_) {
   ParameterName = ParameterName_;

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <vector>
 #include <string>
 /**
  * @file BARTOLSystematicBase.h
@@ -25,7 +25,7 @@ class BARTOLSystematicBase {
   ~BARTOLSystematicBase();
 
 
-  virtual T CalculateWeight(T DialValues, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) = 0;
+  virtual T CalculateWeight(const std::vector<T>& DialValues, size_t position, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) = 0;
   size_t getNumParams();
 private:
   std::string ParameterName;
