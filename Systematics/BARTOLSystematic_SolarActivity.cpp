@@ -5,11 +5,14 @@
 #include <array>
 #include <stdexcept>
 
+namespace{
+const std::string systematicName {"SolarActivity"};
+constexpr size_t numOfDials {1};
 constexpr double protonMass {0.938272};
 constexpr double rigidityCorrection1{4.96};
 constexpr double rigidityCorrection2{1.34};
 constexpr double solarModulationCutOff{100.}; //above 100GeV assume no solar modulation correction.
-
+}
 //units are in (GeV/n)−1m−2s−1sr−1
 constexpr std::array<double, 4> normNominalH {14275, 2.44, -0.36, 2.75};
 
@@ -22,14 +25,14 @@ enum particleID{
 };
 template <typename T>
 T computeWeight(T rigidity, T solarActivity){
-    T minWeight {static_cast<T>(1/(1+static_cast<T>(rigidityCorrection1/(std::pow(rigidity, rigidityCorrection2)))))};
+    T minWeight {static_cast<T>(1/(1+rigidityCorrection1/std::pow(rigidity, rigidityCorrection2)))};
     return static_cast<T>(1 -  solarActivity*(1 - minWeight));
 }
 template <typename T>
 T eventweightSolar(T primaryEnergy,  particleID ID, T solarActivity){
     if (primaryEnergy > solarModulationCutOff)
         return 1.;
-    auto protonRigidity {std::sqrt(primaryEnergy*primaryEnergy - protonMass*protonMass)};
+    T protonRigidity = std::sqrt(primaryEnergy*primaryEnergy - protonMass*protonMass);
 
     if (ID == H){
         return computeWeight(protonRigidity, solarActivity);
@@ -59,7 +62,7 @@ double eventWeightNormalisation(double energy, std::array<double, 4> normParams,
 }
 
 template<typename T>
-BARTOLSystematic_SolarActivity<T>::BARTOLSystematic_SolarActivity() : BARTOLSystematicBase<T>("SolarActivity") {
+BARTOLSystematic_SolarActivity<T>::BARTOLSystematic_SolarActivity() : BARTOLSystematicBase<T>(systematicName, numOfDials) {
 }
 
 template<typename T>
@@ -69,6 +72,6 @@ BARTOLSystematic_SolarActivity<T>::~BARTOLSystematic_SolarActivity() {
 template<typename T>
 T BARTOLSystematic_SolarActivity<T>::CalculateWeight(T DialValue, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
   
-    T Weight = eventweightSolar(NeutrinoEnergy_, H, DialValue); //supposed to be based on parent energy but leave as neutrino energy for now.
+  T Weight = eventweightSolar(NeutrinoEnergy_, H, DialValue); //supposed to be based on parent energy but leave as neutrino energy for now.
   return Weight;
 }

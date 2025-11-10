@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 #include "Systematics/BARTOLSystematicBase.h"
 
@@ -9,7 +8,7 @@
  * @class BARTOLSystematicsHandler
  *
  * @brief 
- */
+ */ 
 template<typename T>
 class BARTOLSystematicsHandler {
 public:
@@ -32,5 +31,5 @@ public:
 private:
   std::vector<BARTOLSystematicBase<T>*> Systematics;
   std::vector<T> DialValues;
-  size_t nParams;
+  size_t nParams {0};
 };
