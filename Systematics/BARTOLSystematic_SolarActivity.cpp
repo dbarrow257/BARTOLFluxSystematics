@@ -35,7 +35,7 @@ std::size_t mapFlavourToHistogramIndex(int x) {
       case -12: return 1;
       case 14:  return 2;
       case -14: return 3;
-      default: return 0;
+      default: return numOfNeuts;
   }
 }
 
@@ -103,7 +103,7 @@ T BARTOLSystematic_SolarActivity<T>::interpolateBasedOnHistogram(TH2D* hist, T N
 template<typename T>
 T BARTOLSystematic_SolarActivity<T>::CalculateWeight(T DialValue, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
   auto histIndex = mapFlavourToHistogramIndex(GeneratedNeutrinoFlavourPDG_);
-  if(histIndex == 0){
+  if(histIndex == numOfNeuts){
     std::cout<<"Invalid Neutrino Flavour PDG must be plus or minus 12 or 14"<<std::endl;
     throw;
   }
