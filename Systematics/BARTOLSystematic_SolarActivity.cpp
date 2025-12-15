@@ -25,9 +25,9 @@ namespace{
 constexpr std::array<int, numOfNeuts> neutrinoPDGNumbers = {12, -12, 14, -14};
 }
 
-double getLogCentreY(TH2D* hist, int binNumber){
-  auto lower = hist->GetYaxis()->GetBinLowEdge(binNumber);
-  auto upper = hist->GetYaxis()->GetBinUpEdge(binNumber);
+double getLogCentreY(const TH2D& hist, int binNumber){
+  auto lower = hist.GetYaxis()->GetBinLowEdge(binNumber);
+  auto upper = hist.GetYaxis()->GetBinUpEdge(binNumber);
   return TMath::Log(TMath::Sqrt(lower*upper));
 }
 
@@ -43,7 +43,7 @@ std::size_t mapFlavourToHistogramIndex(int x) {
 
 template<typename T>
 BARTOLSystematic_SolarActivity<T>::BARTOLSystematic_SolarActivity() : BARTOLSystematicBase<T>("SolarActivity") {
-  std::unique_ptr<TFile> solarActivityFile= std::make_unique<TFile>("/data/t2k/users/coveneyt/T2KSKBartol/BARTOLFluxSystematics/Systematics/data/solarActivityRatio.root", "READ");
+  solarActivityFile= std::make_unique<TFile>("/data/t2k/users/coveneyt/T2KSKBartol/BARTOLFluxSystematics/Systematics/data/solarActivityRatio.root", "READ");
   if (!solarActivityFile || solarActivityFile->IsZombie()) {
     throw std::runtime_error("Error: Could not open solar activity ratio file.");
   }
@@ -55,59 +55,68 @@ BARTOLSystematic_SolarActivity<T>::BARTOLSystematic_SolarActivity() : BARTOLSyst
       throw std::runtime_error(Form("Error: Could not find bartolHist_iogram solarActivityRatio_ solar activity weights file.", neutName));
     }
     std::cout<<bartolHist_i->GetTitle()<<std::endl;
-    solarActivityHistograms.push_back(static_cast<TH2D*>(bartolHist_i->Clone()));
+    TH2D temp = *(bartolHist_i);
+    solarActivityHistograms.push_back(temp);
   }
-  TH2D* exampleHist = solarActivityHistograms[0];
-  minBinCentreX = exampleHist->GetXaxis()->GetBinCenter(1);
-  maxBinCentreX = exampleHist->GetXaxis()->GetBinCenter(exampleHist->GetNbinsX());
+  const TH2D exampleHist = solarActivityHistograms[0];
+  minBinCentreX = exampleHist.GetXaxis()->GetBinCenter(1);
+  maxBinCentreX = exampleHist.GetXaxis()->GetBinCenter(exampleHist.GetNbinsX());
   minBinCentreY = getLogCentreY(exampleHist, 1);
-  maxBinCentreY = getLogCentreY(exampleHist, exampleHist->GetNbinsY());
+  maxBinCentreY = getLogCentreY(exampleHist, exampleHist.GetNbinsY());
+
+  TFile outFile("initial_debug_bartolHistograms.root", "RECREATE");
+  for (auto histPtr : solarActivityHistograms){
+    outFile.WriteTObject(&histPtr);
+
+  }
+  outFile.Close();
+
+  solarActivityFile->Close();
 }
 
 template<typename T>
 BARTOLSystematic_SolarActivity<T>::~BARTOLSystematic_SolarActivity() {
-  for(auto hist : solarActivityHistograms){
-    delete hist;
-  }
+
 }
 
 template<typename T>
-T BARTOLSystematic_SolarActivity<T>::interpolateBasedOnHistogram(TH2D* bartolHist, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
-  if(!bartolHist || bartolHist->IsZombie()){
+T BARTOLSystematic_SolarActivity<T>::interpolateBasedOnHistogram(const TH2D& bartolHist, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
+  if(bartolHist.IsZombie()){
     std::cout<<"Error something happened to the histogram!"<<std::endl;
     throw;
   }
   double logE = TMath::Log(NeutrinoEnergy_);
   logE = std::clamp(logE, minBinCentreY, maxBinCentreY);
   NeutrinoCosineZ_ = std::clamp(NeutrinoCosineZ_, minBinCentreX, maxBinCentreX);
-  auto binX = (bartolHist->GetXaxis())->FindBin(NeutrinoCosineZ_);
-  double binXCentre = (bartolHist->GetXaxis()->GetBinCenter(binX));
-  auto binY = (bartolHist->GetYaxis()->FindBin(NeutrinoEnergy_));
+  auto binX = (bartolHist.GetXaxis())->FindBin(NeutrinoCosineZ_);
+  double binXCentre = (bartolHist.GetXaxis()->GetBinCenter(binX));
+  auto binY = (bartolHist.GetYaxis()->FindBin(NeutrinoEnergy_));
+  binY = std::clamp(binY, 1, bartolHist.GetNbinsY());
   auto binYCentre = getLogCentreY(bartolHist, binY);
 
   auto binXNN = (NeutrinoCosineZ_ > binXCentre) ? binX + 1 : binX - 1;
   auto binYNN = (logE > binYCentre) ? binY +1 : binY - 1;
 
-  binXNN = std::clamp(binXNN, 1, bartolHist->GetNbinsX());
-  binYNN = std::clamp(binYNN, 1, bartolHist->GetNbinsY());
+  binXNN = std::clamp(binXNN, 1, bartolHist.GetNbinsX());
+  binYNN = std::clamp(binYNN, 1, bartolHist.GetNbinsY());
 
 
 
-  if (binX < 1 || binX > bartolHist->GetNbinsX() ||
-  binY < 1 || binY > bartolHist->GetNbinsY() ||
-  binXNN < 1 || binXNN > bartolHist->GetNbinsX() ||
-  binYNN < 1 || binYNN > bartolHist->GetNbinsY()) {
+  if (binX < 1 || binX > bartolHist.GetNbinsX() ||
+  binY < 1 || binY > bartolHist.GetNbinsY() ||
+  binXNN < 1 || binXNN > bartolHist.GetNbinsX() ||
+  binYNN < 1 || binYNN > bartolHist.GetNbinsY()) {
     std::cout << "==== BARTOLSystematic_SolarActivity::interpolateBasedOnHistogram DEBUG ====\n";
 
     // bartolHistogram info
-    std::cout << "bartolHistogram: " << bartolHist->GetTitle() <<"did it not appear?" << "\n"
-              << "  NbinsX=" << bartolHist->GetNbinsX()
+    std::cout << "bartolHistogram: " << bartolHist.GetTitle() <<"did it not appear?" << "\n"
+              << "  NbinsX=" << bartolHist.GetNbinsX()
               << "  Xmin=" << minBinCentreX
               << "  Xmax=" << maxBinCentreX << "\n"
-              << "  NbinsY=" << bartolHist->GetNbinsY()
+              << "  NbinsY=" << bartolHist.GetNbinsY()
               << "  Ymin=" << minBinCentreY
               << "  Ymax=" << maxBinCentreY << "\n"
-              << "X and y axis" << bartolHist -> GetXaxis()->GetName()<<" " << bartolHist->GetYaxis()->GetName()<< "\n";
+              << "X and y axis" << bartolHist . GetXaxis()->GetName()<<" " << bartolHist.GetYaxis()->GetName()<< "\n";
 
     // Input values
     std::cout << "Input values:\n"
@@ -123,34 +132,33 @@ T BARTOLSystematic_SolarActivity<T>::interpolateBasedOnHistogram(TH2D* bartolHis
               << "  binY = " << binY
               << "  Ycenter(log) = " << binYCentre << "\n";
 
-    // Nearest-neighbor info
+
     std::cout << "Nearest-neighbor bins:\n"
               << "  binXNN = " << binXNN
-              << "  XNNcenter = " << bartolHist->GetXaxis()->GetBinCenter(binXNN) << "\n"
+              << "  XNNcenter = " << bartolHist.GetXaxis()->GetBinCenter(binXNN) << "\n"
               << "  binYNN = " << binYNN
               << "  YNNcenter(log) = " << getLogCentreY(bartolHist, binYNN) << "\n";
 
-    // Detailed invalid-message
     std::cout << "Invalid bin indices detected!\n"
-              << "  binX=" << binX << " (valid: 1-" << bartolHist->GetNbinsX() << ")\n"
-              << "  binY=" << binY << " (valid: 1-" << bartolHist->GetNbinsY() << ")\n"
+              << "  binX=" << binX << " (valid: 1-" << bartolHist.GetNbinsX() << ")\n"
+              << "  binY=" << binY << " (valid: 1-" << bartolHist.GetNbinsY() << ")\n"
               << "  binXNN=" << binXNN << " (valid NN)\n";
               
               TFile outFile("debug_bartolHistograms.root", "RECREATE");
-              outFile.WriteTObject(bartolHist);
+              outFile.WriteTObject(&bartolHist);
               outFile.Close();
               std::cout<<"output saved to debug_histograms.root"<<std::endl;
           
 
     
     throw std::runtime_error("failure - check above information");
-}
-  double V00 = bartolHist->GetBinContent(binX, binY);
-  double V10 = bartolHist->GetBinContent(binXNN, binY);
-  double V01 = bartolHist->GetBinContent(binX, binYNN);
-  double V11 = bartolHist->GetBinContent(binXNN, binYNN);
+  }
+  double V00 = bartolHist.GetBinContent(binX, binY);
+  double V10 = bartolHist.GetBinContent(binXNN, binY);
+  double V01 = bartolHist.GetBinContent(binX, binYNN);
+  double V11 = bartolHist.GetBinContent(binXNN, binYNN);
 
-  double binXNNCentre = bartolHist->GetXaxis()->GetBinCenter(binXNN);
+  double binXNNCentre = bartolHist.GetXaxis()->GetBinCenter(binXNN);
   double binYNNCentre = getLogCentreY(bartolHist, binYNN);
 
   double u = (binXNN != binX) ? (NeutrinoCosineZ_ - binXCentre) / (binXNNCentre - binXCentre) : 0.0;

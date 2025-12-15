@@ -28,12 +28,13 @@ class BARTOLSystematic_SolarActivity : public BARTOLSystematicBase<T> {
 
   T CalculateWeight(T DialValue, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) override;
   private:
-    std::vector<TH2D*> solarActivityHistograms;
-    T interpolateBasedOnHistogram(TH2D* hist, T NeutrinoEnergy_, T NeutrinoCosineZ_);
+    std::vector<TH2D> solarActivityHistograms;
+    T interpolateBasedOnHistogram(const TH2D& hist, T NeutrinoEnergy_, T NeutrinoCosineZ_);
     T minBinCentreX;
     T maxBinCentreX;
     double minBinCentreY;
     double maxBinCentreY;
+    std::unique_ptr<TFile> solarActivityFile;
 };
 
 template class BARTOLSystematic_SolarActivity<float>;
