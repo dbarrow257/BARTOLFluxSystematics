@@ -62,15 +62,7 @@ BARTOLSystematic_SolarActivity<T>::BARTOLSystematic_SolarActivity() : BARTOLSyst
   minBinCentreX = exampleHist.GetXaxis()->GetBinCenter(1);
   maxBinCentreX = exampleHist.GetXaxis()->GetBinCenter(exampleHist.GetNbinsX());
   minBinCentreY = getLogCentreY(exampleHist, 1);
-  maxBinCentreY = getLogCentreY(exampleHist, exampleHist.GetNbinsY());
-
-  TFile outFile("initial_debug_bartolHistograms.root", "RECREATE");
-  for (auto histPtr : solarActivityHistograms){
-    outFile.WriteTObject(&histPtr);
-
-  }
-  outFile.Close();
-
+  maxBinCentreY = getLogCentreY(exampleHist, exampleHist->GetNbinsY());
   solarActivityFile->Close();
 }
 
