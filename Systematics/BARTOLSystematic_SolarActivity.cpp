@@ -108,11 +108,14 @@ T BARTOLSystematic_SolarActivity<T>::interpolateBasedOnHistogram(const TH2D& bar
 template<typename T>
 T BARTOLSystematic_SolarActivity<T>::CalculateWeight(T DialValue, int GeneratedNeutrinoFlavourPDG_, T NeutrinoEnergy_, T NeutrinoCosineZ_) {
   auto histIndex = mapFlavourToHistogramIndex(GeneratedNeutrinoFlavourPDG_);
+
   if(histIndex >= solarActivityHistograms.size()){
     std::cout<<"Invalid Neutrino Flavour PDG must be plus or minus 12 or 14"<<std::endl;
     throw;
   }
+  double modifier = DialValue > 0 ? nominal_value + yearnegativeshift*DialValue : nominal_value + yearpostiveshift*DialValue;
+  modifier = std::clamp(modifier, 0., 1.);
   T minWeight = static_cast<T>(interpolateBasedOnHistogram( solarActivityHistograms.at(histIndex), NeutrinoEnergy_, NeutrinoCosineZ_));
-  T weight = (1 -  DialValue*(1 - minWeight));
+  T weight = (1 -  modifier*(1 - minWeight)/(1 -  0.5*(1 - minWeight)));
   return weight;
 }
